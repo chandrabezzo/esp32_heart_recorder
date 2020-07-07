@@ -28,7 +28,7 @@
 
 static const char *TAG = "REC_WAV_SDCARD";
 
-#define RECORD_TIME_SECONDS (5)
+#define RECORD_TIME_SECONDS (20)
 #if defined(CONFIG_IDF_TARGET_ESP8266)
 #define SDA_GPIO 4
 #define SCL_GPIO 5
@@ -36,6 +36,9 @@ static const char *TAG = "REC_WAV_SDCARD";
 #define SDA_GPIO 21
 #define SCL_GPIO 22
 #endif
+
+#define GREEN_LED GPIO_NUM_5
+#define RED_LED GPIO_NUM_18
 
 char *append(char *str1, char *str2){
 	char* has_append;
@@ -65,10 +68,7 @@ struct tm* ds3231_time()
 	return t;
 }
 
-void app_main(void)
-{
-	ESP_ERROR_CHECK(i2cdev_init());
-	struct tm* get_time = ds3231_time();
+void record(struct tm * get_time){
 	audio_pipeline_handle_t pipeline;
 	audio_element_handle_t fatfs_stream_writer, i2s_stream_reader, wav_encoder, equalizer;
 
@@ -98,11 +98,11 @@ void app_main(void)
 	fatfs_stream_writer = fatfs_stream_init(&fatfs_cfg);
 
 	ESP_LOGI(TAG, "[3.2] Create i2s stream to read data from codec chip");
-   i2s_stream_cfg_t i2s_cfg_read = I2S_STREAM_CFG_DEFAULT();
-   i2s_cfg_read.type = AUDIO_STREAM_READER;
-   i2s_stream_reader = i2s_stream_init(&i2s_cfg_read);
+	i2s_stream_cfg_t i2s_cfg_read = I2S_STREAM_CFG_DEFAULT();
+	i2s_cfg_read.type = AUDIO_STREAM_READER;
+	i2s_stream_reader = i2s_stream_init(&i2s_cfg_read);
 
-   equalizer_cfg_t eq_cfg = DEFAULT_EQUALIZER_CONFIG();
+    equalizer_cfg_t eq_cfg = DEFAULT_EQUALIZER_CONFIG();
 	int set_gain[] = { 20, 20, 20, 20, 13, 13, 13, 13, 13, 13, 20, 20, 20, 20, 13, 13, 13, 13, 13, 13};
 	eq_cfg.set_gain =
 		set_gain; // The size of gain array should be the multiplication of NUMBER_BAND and number channels of audio stream data. The minimum of gain is -20 dB.
@@ -125,13 +125,14 @@ void app_main(void)
 	audio_pipeline_register(pipeline, fatfs_stream_writer, "file");
 
 	ESP_LOGI(TAG, "[3.5] Link it together [codec_chip]-->i2s_stream-->wav_encoder-->fatfs_stream-->[sdcard]");
-	audio_pipeline_link(pipeline, (const char *[]) {"i2s_reader", "equalizer",  "wav", "file"}, 4);
+	audio_pipeline_link(pipeline, (const char *[]) {"i2s_reader", "equalizer", "wav", "file"}, 4);
 
 	ESP_LOGI(TAG, "[3.6] Set up  uri (file as fatfs_stream, wav as wav encoder)");
-	char text[100];
-	strftime(text, sizeof(text)-1, "%H%M%d", get_time);
 
-	char * file_name = append("/sdcard/", text);
+	char timename[100];
+	strftime(timename, sizeof(timename)-1, "%H%M%d", get_time);
+
+	char * file_name = append("/sdcard/", timename);
 	char * name_extension = append(file_name, ".wav");
 	audio_element_set_uri(fatfs_stream_writer, name_extension);
 
@@ -197,4 +198,26 @@ void app_main(void)
 	audio_element_deinit(equalizer);
 	audio_element_deinit(wav_encoder);
 	esp_periph_set_destroy(set);
+}
+
+void app_main(void)
+{
+	ESP_ERROR_CHECK(i2cdev_init());
+	struct tm* get_time = ds3231_time();
+	ESP_ERROR_CHECK(i2cdev_done());
+
+	gpio_pad_select_gpio(GREEN_LED);
+	gpio_pad_select_gpio(RED_LED);
+	gpio_set_direction(GREEN_LED, GPIO_MODE_OUTPUT);
+	gpio_set_direction(RED_LED, GPIO_MODE_OUTPUT);
+
+	vTaskDelay(5000 / portTICK_PERIOD_MS);
+	gpio_set_level(RED_LED, 0);
+	gpio_set_level(GREEN_LED, 1);
+
+	record(get_time);
+
+	vTaskDelay(5000 / portTICK_PERIOD_MS);
+	gpio_set_level(GREEN_LED, 0);
+	gpio_set_level(RED_LED, 1);
 }

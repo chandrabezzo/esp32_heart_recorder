@@ -324,6 +324,13 @@
 /Users/bezzo/eclipse-workspace/heart_recorder/build/esp-idf/bt/CMakeFiles/list_install_components.dir
 /Users/bezzo/eclipse-workspace/heart_recorder/build/esp-idf/bt/CMakeFiles/rebuild_cache.dir
 /Users/bezzo/eclipse-workspace/heart_recorder/build/esp-idf/bt/CMakeFiles/edit_cache.dir
+/Users/bezzo/eclipse-workspace/heart_recorder/build/esp-idf/button/CMakeFiles/install/strip.dir
+/Users/bezzo/eclipse-workspace/heart_recorder/build/esp-idf/button/CMakeFiles/install.dir
+/Users/bezzo/eclipse-workspace/heart_recorder/build/esp-idf/button/CMakeFiles/list_install_components.dir
+/Users/bezzo/eclipse-workspace/heart_recorder/build/esp-idf/button/CMakeFiles/rebuild_cache.dir
+/Users/bezzo/eclipse-workspace/heart_recorder/build/esp-idf/button/CMakeFiles/edit_cache.dir
+/Users/bezzo/eclipse-workspace/heart_recorder/build/esp-idf/button/CMakeFiles/install/local.dir
+/Users/bezzo/eclipse-workspace/heart_recorder/build/esp-idf/button/CMakeFiles/__idf_button.dir
 /Users/bezzo/eclipse-workspace/heart_recorder/build/esp-idf/coap/CMakeFiles/install/local.dir
 /Users/bezzo/eclipse-workspace/heart_recorder/build/esp-idf/coap/CMakeFiles/rebuild_cache.dir
 /Users/bezzo/eclipse-workspace/heart_recorder/build/esp-idf/coap/CMakeFiles/edit_cache.dir

@@ -32,6 +32,7 @@
 /Users/bezzo/eclipse-workspace/heart_recorder/build/esp-idf/bme680/libbme680.a
 /Users/bezzo/eclipse-workspace/heart_recorder/build/esp-idf/bmp180/libbmp180.a
 /Users/bezzo/eclipse-workspace/heart_recorder/build/esp-idf/bmp280/libbmp280.a
+/Users/bezzo/eclipse-workspace/heart_recorder/build/esp-idf/button/libbutton.a
 /Users/bezzo/eclipse-workspace/heart_recorder/build/esp-idf/coap/libcoap.a
 /Users/bezzo/eclipse-workspace/heart_recorder/build/esp-idf/console/libconsole.a
 /Users/bezzo/eclipse-workspace/heart_recorder/build/esp-idf/dht/libdht.a
