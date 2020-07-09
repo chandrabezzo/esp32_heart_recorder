@@ -2,7 +2,6 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_log.h"
-#include "sdkconfig.h"
 #include "audio_element.h"
 #include "audio_pipeline.h"
 #include "audio_event_iface.h"
@@ -16,7 +15,6 @@
 #include "equalizer.h"
 #include <time.h>
 #include <stdio.h>
-#include <string.h>
 #include <ds3231.h>
 
 static const char *TAG = "E_STETOSKOP";
@@ -107,12 +105,6 @@ void record(struct tm * get_time){
 	ESP_LOGI(TAG, "[3.4] Register all elements to audio pipeline");
 	audio_pipeline_register(pipeline, i2s_stream_reader, "i2s_reader");
 	audio_pipeline_register(pipeline, equalizer, "equalizer");
-	/**
-	 * Wav encoder actually passes data without doing anything, which makes the pipeline structure easy to understand.
-	 * Because WAV is raw data and audio information is stored in the header,
-	 * I2S Stream will write the WAV header after ending the record with enough the information
-	 *
-	 */
 	audio_pipeline_register(pipeline, wav_encoder, "wav");
 	audio_pipeline_register(pipeline, fatfs_stream_writer, "file");
 
