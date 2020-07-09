@@ -1,10 +1,3 @@
-/* Record WAV file to SD Card
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
-
 #include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -26,7 +19,7 @@
 #include <string.h>
 #include <ds3231.h>
 
-static const char *TAG = "REC_WAV_SDCARD";
+static const char *TAG = "E_STETOSKOP";
 
 #define RECORD_TIME_SECONDS (20)
 #if defined(CONFIG_IDF_TARGET_ESP8266)
@@ -42,8 +35,8 @@ static const char *TAG = "REC_WAV_SDCARD";
 
 char *append(char *str1, char *str2){
 	char* has_append;
-	has_append = malloc(strlen(str1)+strlen(str2)); /* make space for the new string (should check the return value ...) */
-	strcpy(has_append, str1); /* copy name into the new var */
+	has_append = malloc(strlen(str1)+strlen(str2));
+	strcpy(has_append, str1);
 	strcat(has_append, str2);
 
 	return has_append;
@@ -104,8 +97,7 @@ void record(struct tm * get_time){
 
     equalizer_cfg_t eq_cfg = DEFAULT_EQUALIZER_CONFIG();
 	int set_gain[] = { 20, 20, 20, 20, 13, 13, 13, 13, 13, 13, 20, 20, 20, 20, 13, 13, 13, 13, 13, 13};
-	eq_cfg.set_gain =
-		set_gain; // The size of gain array should be the multiplication of NUMBER_BAND and number channels of audio stream data. The minimum of gain is -20 dB.
+	eq_cfg.set_gain = set_gain; // The size of gain array should be the multiplication of NUMBER_BAND and number channels of audio stream data. The minimum of gain is -20 dB.
 	equalizer = equalizer_init(&eq_cfg);
 
 	ESP_LOGI(TAG, "[3.3] Create wav encoder to encode wav format");
@@ -128,7 +120,6 @@ void record(struct tm * get_time){
 	audio_pipeline_link(pipeline, (const char *[]) {"i2s_reader", "equalizer", "wav", "file"}, 4);
 
 	ESP_LOGI(TAG, "[3.6] Set up  uri (file as fatfs_stream, wav as wav encoder)");
-
 	char timename[100];
 	strftime(timename, sizeof(timename)-1, "%H%M%d", get_time);
 
@@ -202,10 +193,12 @@ void record(struct tm * get_time){
 
 void app_main(void)
 {
+	// Get current time from Adafruit DS3231 RTC
 	ESP_ERROR_CHECK(i2cdev_init());
 	struct tm* get_time = ds3231_time();
 	ESP_ERROR_CHECK(i2cdev_done());
 
+	// Setup gpio for 5mm LED
 	gpio_pad_select_gpio(GREEN_LED);
 	gpio_pad_select_gpio(RED_LED);
 	gpio_set_direction(GREEN_LED, GPIO_MODE_OUTPUT);
