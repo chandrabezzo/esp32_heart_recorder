@@ -19,7 +19,7 @@
 
 static const char *TAG = "E_STETOSKOP";
 
-#define RECORD_TIME_SECONDS (20)
+#define RECORD_TIME_SECONDS (60)
 #if defined(CONFIG_IDF_TARGET_ESP8266)
 #define SDA_GPIO 4
 #define SCL_GPIO 5
@@ -188,6 +188,8 @@ void app_main(void)
 	// Get current time from Adafruit DS3231 RTC
 	ESP_ERROR_CHECK(i2cdev_init());
 	struct tm* get_time = ds3231_time();
+	ESP_LOGI(TAG, "Current DateTime: %04d-%02d-%02d %02d:%02d:%02d\n", get_time->tm_year + 1900 /*Add 1900 for better readability*/, get_time->tm_mon + 1,
+	                get_time->tm_mday, get_time->tm_hour, get_time->tm_min, get_time->tm_sec);
 	ESP_ERROR_CHECK(i2cdev_done());
 
 	// Setup gpio for 5mm LED
